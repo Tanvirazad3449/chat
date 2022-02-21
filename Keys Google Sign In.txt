@@ -1,0 +1,55 @@
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
+----------
+Variant: debugUnitTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
+----------
+Variant: releaseUnitTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
+----------
+
+> Task :react-native-screens:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
+----------
+Variant: debugUnitTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
+----------
+Variant: releaseUnitTest
+Config: debug
+Store: C:\Users\ON-AIR\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 11:D9:54:31:70:AA:16:1C:7E:3E:B0:A3:3A:BF:86:DD
+SHA1: 4B:A6:C2:0D:09:84:06:6D:FA:18:67:32:7E:5A:AD:45:B0:80:5D:E0
+SHA-256: 6C:B2:17:C7:A0:D7:28:75:5C:52:DA:8E:D5:EB:38:B7:4D:DF:97:5F:DD:AD:81:C6:7E:A5:FC:57:DB:C2:FA:9F
+Valid until: Thursday, May 25, 2051
