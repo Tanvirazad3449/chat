@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,37 +8,28 @@ const Home = ({navigation}) => {
   const [userData, setUserData] = React.useState();
 
   React.useEffect(() => {
-    AsyncStorage.getItem('token').then(res => {
-      console.log("TOKEN----------------------")
-
-      console.log(JSON.parse(res))
+    AsyncStorage.getItem('token').then(res => {      
       setUserData(JSON.parse(res));
     });
     
     const unsubscribe = firestore()
       .collection('Users')
-
       .onSnapshot(querySnapshot => {
         const threads = querySnapshot.docs.map(documentSnapshot => {
           return {
             _id: documentSnapshot.id,
-            // give defaults
-
             latestMessage: {
               text: '',
             },
             ...documentSnapshot.data(),
           };
         });
-        console.log("THREADS----------------------")
-        console.log(threads)
+        console.log("Users signed in")
 
+        console.log(threads)
         setData(threads);
       });
-
-    /**
-     * unsubscribe listener
-     */
+    
     return () => {
       unsubscribe();
     };
@@ -49,7 +40,13 @@ const Home = ({navigation}) => {
       userData.user.uid === item.uid ? null :
       <TouchableOpacity
         onPress={() => navigation.navigate('Chat', {data: item})}
-        style={{margin: 10, paddingLeft: 20}}>
+        style={{margin: 10, paddingLeft: 20, paddingBottom:5,borderBottomWidth: 1, borderBottomColor:"grey"}}>
+        {/* <Image
+        style={styles.stretch}
+        source={{
+          uri: 'https://reactnative.dev/img/tiny_logo.png',
+        }}
+      /> */}
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>
           {item?.displayName}
         </Text>
@@ -66,19 +63,18 @@ const Home = ({navigation}) => {
   return (
     <FlatList
       data={data}
-      renderItem={renderData}
-      ItemSeparatorComponent={() => (
-        <View
-          style={{
-            height: 0.5,
-            width: '100%',
-            backgroundColor: '#7a7e83',
-            marginTop: 5,
-          }}
-        />
-      )}
+      renderItem={renderData}      
     />
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 50,
+  },
+  stretch: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+  },
+});
 export default Home;

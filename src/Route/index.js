@@ -21,7 +21,7 @@ function HomeStackContainer() {
         component={Home}
         options={{
           headerShown: true,
-          title: 'Select Person to chat',
+          title: 'Chats',
           headerTitleStyle: {
             fontWeight: '400',
             fontFamily: Platform.OS == 'android' ? 'roboto' : null,
@@ -32,7 +32,7 @@ function HomeStackContainer() {
         name="Chat"
         component={Chat}
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </HomeStack.Navigator>
