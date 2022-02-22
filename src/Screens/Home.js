@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = ({navigation}) => {
   const [data, setData] = React.useState([]);
   const [userData, setUserData] = React.useState();
-
+	const newChange = "hello";
   React.useEffect(() => {
     AsyncStorage.getItem('token').then(res => {      
       setUserData(JSON.parse(res));
