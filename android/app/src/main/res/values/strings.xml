@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Chat</string>
+    <string name="facebook_app_id">1018397512105676</string>
+
 </resources>

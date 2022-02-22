@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Button , Image} from 'react-native';
+import { View, Text, SafeAreaView,useState, StyleSheet, Button , Image} from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import { CommonActions } from '@react-navigation/native';
+import {
+  LoginButton,
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager,
+} from 'react-native-fbsdk';
 
 const Signup = ({ navigation }) => {
   React.useEffect(() => {
@@ -29,7 +35,29 @@ function call (){
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     return auth().signInWithCredential(googleCredential);
   }
+  const [userName, setUserName] = useState('');
+  const [token, setToken] = useState('');
+  const [profilePic, setProfilePic] = useState('');
 
+  const getResponseInfo = (error, result) => {
+    if (error) {
+      //Alert for the Error
+      alert('Error fetching data: ' + error.toString());
+    } else {
+      //response alert
+      console.log(JSON.stringify(result));
+      setUserName('Welcome ' + result.name);
+      setToken('User Token: ' + result.id);
+      setProfilePic(result.picture.data.url);
+    }
+  };
+
+  const onLogout = () => {
+    //Clear the state after logout
+    setUserName(null);
+    setToken(null);
+    setProfilePic(null);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,6 +93,38 @@ function call (){
           )
         }
       />
+      {profilePic ? (
+          <Image
+            source={{uri: profilePic}}
+            style={styles.imageStyle}
+          />
+        ) : null}
+        <Text style={styles.textStyle}> {userName} </Text>
+        <Text style={styles.textStyle}> {token} </Text>
+      <LoginButton
+          readPermissions={['public_profile']}
+          onLoginFinished={(error, result) => {
+            if (error) {
+              alert(error);
+              console.log('Login has error: ' + result.error);
+            } else if (result.isCancelled) {
+              alert('Login is cancelled.');
+            } else {
+              AccessToken.getCurrentAccessToken().then((data) => {
+                console.log(data.accessToken.toString());
+                const processRequest = new GraphRequest(
+                  '/me?fields=name,picture.type(large)',
+                  null,
+                  getResponseInfo,
+                );
+                // Start the graph request.
+                new GraphRequestManager()
+                  .addRequest(processRequest).start();
+              });
+            }
+          }}
+          onLogoutFinished={onLogout}
+        />
     </SafeAreaView>
   );
 
@@ -77,6 +137,33 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor:"white",
     paddingVertical:30
+  },
+  textStyle: {
+    fontSize: 20,
+    color: '#000',
+    textAlign: 'center',
+    padding: 10,
+  },
+  imageStyle: {
+    width: 200,
+    height: 300,
+    resizeMode: 'contain',
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    padding: 20,
+  },
+  footerHeading: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'grey',
+  },
+  footerText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'grey',
   },
 });
 
