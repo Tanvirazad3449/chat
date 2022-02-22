@@ -20,7 +20,7 @@ function HomeStackContainer() {
         name="Home"
         component={Home}
         options={{
-          headerShown: true,
+          headerShown: false,
           title: 'Chats',
           headerTitleStyle: {
             fontWeight: '400',

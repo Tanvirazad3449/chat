@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Button } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Button , Image} from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,35 +8,36 @@ import { CommonActions } from '@react-navigation/native';
 
 const Signup = ({ navigation }) => {
   React.useEffect(() => {
-    configureGoogleSign();
+    call()
   }, []);
 
+function call (){
+  configureGoogleSign();
+
+}
   function configureGoogleSign() {
+    console.log("Config Google Sign In")
     GoogleSignin.configure({
       webClientId: "541086532591-1sqd1anc13e3lo8m750dgij1f0pbtj0q.apps.googleusercontent.com",
       offlineAccess: false,
+      profileImageSize: 120,
     });
-
   }
 
   async function onGoogleButtonPress() {
-    // Get the users ID token
     const { idToken } = await GoogleSignin.signIn();
-    console.log("**********************************************");
-
-    // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    console.log({ idToken });
-    // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   }
 
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={{marginTop: 50, fontSize: 25, fontWeight: 'bold'}}>
-        Welcome
-      </Text>
-      <Text style={{marginTop: 20, fontSize: 18}}>Login to chat</Text>
+    <Image
+        style={{height:100, width:100}}
+        source={require("./../Asset/logo.png")}
+      />
+      
       <Button
         title="Google Sign-In"
         onPress={() =>
@@ -44,12 +45,15 @@ const Signup = ({ navigation }) => {
             AsyncStorage.setItem('token', JSON.stringify(res)).then(res1 =>
               firestore()
                 .collection('Users')
-                .add({
+                .doc(res.user.uid)
+                .set({
                   displayName: res.user.displayName,
                   email: res.user.email,
                   uid: res.user.uid,
+                  photoURL:res.user.photoURL
                 })
                 .then(() => {
+                  console.log(res)
                   navigation.dispatch(
                     CommonActions.reset({
                       index: 0,
@@ -70,7 +74,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    backgroundColor:"white",
+    paddingVertical:30
   },
 });
 
