@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, SafeAreaView,useState, StyleSheet, Button , Image} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, Button, Image } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,14 +13,13 @@ import {
 } from 'react-native-fbsdk';
 
 const Signup = ({ navigation }) => {
+  const [userName, setUserName] = useState('');
+  const [token, setToken] = useState('');
+  const [profilePic, setProfilePic] = useState('');
   React.useEffect(() => {
-    call()
+    configureGoogleSign();
   }, []);
 
-function call (){
-  configureGoogleSign();
-
-}
   function configureGoogleSign() {
     console.log("Config Google Sign In")
     GoogleSignin.configure({
@@ -29,26 +28,55 @@ function call (){
       profileImageSize: 120,
     });
   }
-
   async function onGoogleButtonPress() {
     const { idToken } = await GoogleSignin.signIn();
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     return auth().signInWithCredential(googleCredential);
   }
-  const [userName, setUserName] = useState('');
-  const [token, setToken] = useState('');
-  const [profilePic, setProfilePic] = useState('');
 
-  const getResponseInfo = (error, result) => {
+  const getFBInfo = (error, result) => {
     if (error) {
       //Alert for the Error
       alert('Error fetching data: ' + error.toString());
     } else {
-      //response alert
-      console.log(JSON.stringify(result));
-      setUserName('Welcome ' + result.name);
-      setToken('User Token: ' + result.id);
-      setProfilePic(result.picture.data.url);
+      var fbRes =
+      {
+        _id: result.id,
+        displayName: result.name,
+        email: "Facebook Login",
+        latestMessage: {
+          text: ""
+        },
+        photoURL: result.picture.data.url,
+        uid: result.id
+      }
+
+      AsyncStorage.setItem('token', JSON.stringify(fbRes))
+        .then(res1 =>
+          firestore()
+            .collection('Users')
+            .doc(result.id)
+            .set({
+              displayName: result.name,
+              email: "Facebook Login",
+              uid: result.id,
+              photoURL: result.picture.data.url
+            })
+            .then(() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'Home' }],
+                }),
+              );
+            }),
+        ),
+
+        //response alert
+        console.log(JSON.stringify(result));
+      // setUserName('Welcome ' + result.name);
+      // setToken('User Token: ' + result.id);
+      // setProfilePic(result.picture.data.url);
     }
   };
 
@@ -61,16 +89,17 @@ function call (){
 
   return (
     <SafeAreaView style={styles.container}>
-    <Image
-        style={{height:100, width:100}}
+      
+      <Image
+        style={{ height: 100, width: 100 }}
         source={require("./../Asset/logo.png")}
       />
-      
+<View>
       <Button
         title="Google Sign-In"
         onPress={() =>
           onGoogleButtonPress().then(res =>
-            AsyncStorage.setItem('token', JSON.stringify(res)).then(res1 =>
+            AsyncStorage.setItem('token', JSON.stringify(res.user)).then(res1 =>
               firestore()
                 .collection('Users')
                 .doc(res.user.uid)
@@ -78,14 +107,14 @@ function call (){
                   displayName: res.user.displayName,
                   email: res.user.email,
                   uid: res.user.uid,
-                  photoURL:res.user.photoURL
+                  photoURL: res.user.photoURL
                 })
                 .then(() => {
                   console.log(res)
                   navigation.dispatch(
                     CommonActions.reset({
                       index: 0,
-                      routes: [{name: 'Home'}],
+                      routes: [{ name: 'Home' }],
                     }),
                   );
                 }),
@@ -93,38 +122,33 @@ function call (){
           )
         }
       />
-      {profilePic ? (
-          <Image
-            source={{uri: profilePic}}
-            style={styles.imageStyle}
-          />
-        ) : null}
-        <Text style={styles.textStyle}> {userName} </Text>
-        <Text style={styles.textStyle}> {token} </Text>
+      <View style={{height:20}}/>
       <LoginButton
-          readPermissions={['public_profile']}
-          onLoginFinished={(error, result) => {
-            if (error) {
-              alert(error);
-              console.log('Login has error: ' + result.error);
-            } else if (result.isCancelled) {
-              alert('Login is cancelled.');
-            } else {
-              AccessToken.getCurrentAccessToken().then((data) => {
-                console.log(data.accessToken.toString());
-                const processRequest = new GraphRequest(
-                  '/me?fields=name,picture.type(large)',
-                  null,
-                  getResponseInfo,
-                );
-                // Start the graph request.
-                new GraphRequestManager()
-                  .addRequest(processRequest).start();
-              });
-            }
-          }}
-          onLogoutFinished={onLogout}
-        />
+        readPermissions={['public_profile']}
+        onLoginFinished={(error, result) => {
+          if (error) {
+            alert(error);
+            console.log('Login has error: ' + result.error);
+          } else if (result.isCancelled) {
+            alert('Login is cancelled.');
+          } else {
+            AccessToken.getCurrentAccessToken().then((data) => {
+              AsyncStorage.setItem('fb_access_token', data.accessToken.toString())
+              console.log(data.accessToken.toString());
+              const processRequest = new GraphRequest(
+                '/me?fields=name,picture.type(large)',
+                null,
+                getFBInfo,
+              );
+              // Start the graph request.
+              new GraphRequestManager()
+                .addRequest(processRequest).start();
+            });
+          }
+        }}
+        onLogoutFinished={onLogout}
+      />
+      </View>
     </SafeAreaView>
   );
 
@@ -135,8 +159,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor:"white",
-    paddingVertical:30
+    backgroundColor: "white",
+    paddingVertical: 30
   },
   textStyle: {
     fontSize: 20,

@@ -16,7 +16,7 @@ const Chat = routes => {
   async function getToken() {
     AsyncStorage.getItem('token').then(async res => {
       setUserData(JSON.parse(res))
-      userId = JSON.parse(res)?.user?.uid
+      userId = JSON.parse(res)?.uid
       friendId = routes.route.params.data.uid
       const docid = friendId > userId ? userId + "-" + friendId : friendId + "-" + userId
       getMessages(docid)
@@ -73,7 +73,7 @@ const Chat = routes => {
   }, []);
   async function handleSend(messages, image, pdf) {
     const text = messages[0]?.text || chatText[0]?.text;
-    userId = userData?.user?.uid
+    userId = userData?.uid
     friendId = routes.route.params.data.uid
     const docid = friendId > userId ? userId + "-" + friendId : friendId + "-" + userId
     firestore()
@@ -85,10 +85,10 @@ const Chat = routes => {
         createdAt: new Date().getTime(),
         system: false,
         sentTo: routes.route.params.data.uid,
-        sentBy: userData?.user?.uid,
-        name: userData?.user?.displayName,
+        sentBy: userData?.uid,
+        name: userData?.displayName,
         user: {
-          _id: userData?.user?.uid,
+          _id: userData?.uid,
         },
       });
 
@@ -139,7 +139,7 @@ const Chat = routes => {
           handleSend(messages);
         }}
         user={{
-          _id: userData?.user?.uid,
+          _id: userData?.uid,
         }}
       />
     </View>

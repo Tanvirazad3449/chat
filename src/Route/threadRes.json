@@ -1,12 +1,12 @@
-[
-    {
-        "_id": "kBNOwSOMTUfSEjhj4pMGPYPTgIo2",
-        "displayName": "Wakanda Foreva",
-        "email": "wakanda3449@gmail.com",
-        "latestMessage": {
-            "text": ""
-        },
-        "photoURL": "https://lh3.googleusercontent.com/a-/AOh14GiejrSIAW_NGJnlbFgCA5X9w5M61rU_ZFdfTA3k=s96-c",
-        "uid": "kBNOwSOMTUfSEjhj4pMGPYPTgIo2"
-    }
-]
+{
+    "picture": {
+        "data": {
+            "width": 200,
+            "url": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=140059685163641&height=200&width=200&ext=1648232497&hash=AeTpBJoMJwuuL82N61w",
+            "is_silhouette": false,
+            "height": 200
+        }
+    },
+    "id": "140059685163641",
+    "name": "Tahira Kabir"
+}

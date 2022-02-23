@@ -4,10 +4,25 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
+import {
+  LoginButton,
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager,
+  LoginManager
+} from 'react-native-fbsdk';
 const Home = ({ navigation }) => {
   const [data, setData] = React.useState([]);
-  const [userData, setUserData] = React.useState();
+  const [userData, setUserData] = React.useState({
+    _id: null,
+    displayName: null,
+    email: null,
+    latestMessage: {
+      text: ""
+    },
+    photoURL: null,
+    uid: null
+  });
 
   React.useEffect(() => {
     configureGoogleSign()
@@ -15,9 +30,34 @@ const Home = ({ navigation }) => {
     getUsers();
   }, []);
 
+  const FBLogout = () => {
+    try {
+      AsyncStorage.getItem('fb_access_token').then(accessToken => {
+        let logout =
+          new GraphRequest(
+              "me/permissions/",
+              {
+                  accessToken: accessToken,
+                  httpMethod: 'DELETE'
+              },
+              (error, result) => {
+                  if (error) {
+                      console.log('Error fetching data: ' + error.toString());
+                  } else {
+                      LoginManager.logOut();
+                  }
+              });
+      new GraphRequestManager().addRequest(logout).start();
+      }); 
+    } catch (error) {
+      null;
+    }
+    
+    
+};
   const renderData = ({ item, index }) => {
     return (
-      userData.user.uid === item.uid ? null :
+      userData.uid === item.uid ? null :
         <TouchableOpacity
           onPress={() => navigation.navigate('Chat', { data: item })}
           style={{ margin: 10, paddingLeft: 0, paddingBottom: 5, backgroundColor:"white", flexDirection:"row", alignItems:"center"}}>  
@@ -41,7 +81,7 @@ const Home = ({ navigation }) => {
 
     );
   };
-  getUsers = async () => {
+  const getUsers = async () => {
     const unsubscribe = firestore()
       .collection('Users')
       .onSnapshot(querySnapshot => {
@@ -73,7 +113,7 @@ const Home = ({ navigation }) => {
       profileImageSize: 120,
     });
   }
-  getLocalToken = async () => {
+  const getLocalToken = async () => {
     AsyncStorage.getItem('token').then(res => {
       setUserData(JSON.parse(res));
       console.log("**********************")
@@ -81,7 +121,7 @@ const Home = ({ navigation }) => {
       console.log(JSON.parse(res))
     });
   }
-  signOut = async () => {
+  const signOut = async () => {
     Alert.alert(
       "Confirm",
       "Do you want to sign out?",
@@ -93,6 +133,7 @@ const Home = ({ navigation }) => {
         },
         { text: "OK", onPress: async() => {
           await GoogleSignin.signOut();
+          FBLogout();
         AsyncStorage.clear();
         RNRestart.Restart(); 
       }}
@@ -104,20 +145,19 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={{backgroundColor:"white", flex:1}}>
-    {userData?.user?.uid &&
       <View style={{ height: 50, backgroundColor: "white", elevation: 5, justifyContent: 'space-between', flexDirection: "row", alignItems: "center", paddingHorizontal: 15 }}>
         <Text style={{ fontWeight: "bold", fontSize: 18, color: "black" }}>Chats</Text>
         <TouchableOpacity onPress={() => signOut()}>
           <Image
             style={{ height: 30, width: 30, borderRadius: 20, borderWidth: 1, borderColor: "grey" }}
             source={{
-              uri: userData.user.photoURL,
+              uri: userData?.photoURL,
             }}
           />
 
         </TouchableOpacity>
       </View>
-    }
+    
       <FlatList
         data={data}
         renderItem={renderData}
