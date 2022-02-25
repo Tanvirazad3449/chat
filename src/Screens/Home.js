@@ -121,6 +121,9 @@ const Home = ({ navigation }) => {
       console.log(JSON.parse(res))
     });
   }
+  // need to fix the sign out 
+  // google sign out crashes the app
+  // facebook sign out shows "log out" on the login screen
   const signOut = async () => {
     Alert.alert(
       "Confirm",
